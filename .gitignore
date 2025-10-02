@@ -44,3 +44,6 @@ GP1/CMakeFiles/tst.dir/link.txt
 GP1/CMakeFiles/tst.dir/parser.cpp.o
 GP1/CMakeFiles/tst.dir/parser.cpp.o.d
 GP1/CMakeFiles/tst.dir/progress.make
+GP1/gen/parser.h
+GP1/gen/scanner.h
+GP1/tst

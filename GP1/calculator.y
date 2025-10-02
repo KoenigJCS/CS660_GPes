@@ -4,15 +4,19 @@
 #include <string>
 #include <iostream>
 #include <map>
-extern int yylex();
-extern int yyparse();
+#include <variant>
+extern "C" int yyparse(void);
+extern "C" int yylex(void);
 void yyerror(const char* s);
-std::map<char*, double> symtab;
+std::map<char, double> symtab;
 %}
+
+
+/* %define api.value.type union */
 
 %union {
     double dval;
-    char* sval;
+    char sval;
 }
 
 %token <dval> NUMBER
@@ -33,7 +37,7 @@ std::map<char*, double> symtab;
 %left MULT DIV
 %left INCREMENT DECREMENT
 
-%type <dval> Goal Declaration Expr Term Value Factor
+%type <dval> Goal Declaration Expr Term Value Factor DeclarationList
 
 %start Goal
 
@@ -59,9 +63,12 @@ Factor-> (Declaration)
     | -> name
 */
 
-Goal: Declaration SEMI {
-        std::cout << "Result: " << $1 << std::endl;
+Goal: DeclarationList {
+        
     }
+    ;
+DeclarationList: DeclarationList Declaration SEMI { printf("%.2lf\n", $2); }
+    | Declaration SEMI { printf("%.2lf\n", $1); }
     ;
 Declaration: IDENTIFIER ASSIGN Expr {symtab[$1] = $3; $$ = $3;}
     | Expr
@@ -74,10 +81,10 @@ Term: Term MULT Value {$$ = $1 * $3;}
     | Term DIV Value {$$ = $1 / $3;}
     | Value
     ;
-Value: IDENTIFIER INCREMENT {symtab[$1] == symtab[$1]++; $$ = symtab[$1];}
-    | IDENTIFIER DECREMENT {symtab[$1] == symtab[$1]--; $$ = symtab[$1];}
-    | NUMBER INCREMENT {$$ = $1++; }
-    | NUMBER DECREMENT {$$ = $1--; }
+Value: IDENTIFIER INCREMENT {$$ = ++symtab[$1];}
+    | IDENTIFIER DECREMENT {$$ = --symtab[$1];}
+    | NUMBER INCREMENT {$$ = $1 + 1; }
+    | NUMBER DECREMENT {$$ = $1 - 1; }
     | Factor
     ;
 Factor: OPEN Declaration CLOSE {$$ = $2;}
@@ -88,6 +95,6 @@ Factor: OPEN Declaration CLOSE {$$ = $2;}
 %% /* Code */
 
 
-void yyerror(char * s) {
+void yyerror(const char * s) {
 	std::cerr << s << std::endl;
 }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 
 #ifdef _MSC_VER 
 #define YY_NO_UNISTD_H
@@ -9,7 +10,8 @@
 #include "gen/scanner.h"
 
 void flexTest(std::string string) {
-	scan_string_wrapper(string.c_str());
+    yy_scan_string(string.c_str());
+
 	int	token;
 
 	while((token=yylex()) != 0){
@@ -32,17 +34,25 @@ void flexTest(std::string string) {
 }
 
 void bisonTest(std::string string) {
-    
+	yy_scan_string(string.c_str());
 	yyparse();
 }
 
+
 int main() {
-	flexTest("2 + 2; 4 / 2; 5 - 6;");
+	// flexTest("2 + 2; 4 / 2; 5 - 6;");
+    
 	bisonTest("2 + 2; 4 / 2; 5 - 6;");
-
+	bisonTest("4 / 67;");
+    bisonTest("a = 5; b = a++; c = b * 2; c--;");
+    bisonTest("x = 10; y = x--; z = y / 2; z++;");
+    bisonTest("m = 3; n = m++; p = n + 4; p--;");
+    bisonTest("val = 7; val++; val = val * 2; val--;");
+    bisonTest("count = 1; count++; count = count + 5; count--;");
+    bisonTest("num = 8; num--; num = num - 3; num++;");
+    bisonTest("total = 0; total++; total = total + 10; total--;");
+    bisonTest("index = 4; index--; index = index * 3; index++;");
+    bisonTest("score = 15; score++; score = score / 3; score--;");
+    bisonTest("level = 2; level--; level = level + 6; level++;");
 	// std::cout << "Hello World" << std::endl;
-}
-
-void yyerror(const char* s) {
-	std::cerr << s << std::endl;
 }

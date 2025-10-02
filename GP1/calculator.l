@@ -4,28 +4,29 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctype.h>
+#include <string>
 %}
 
 %option noyywrap
-%option c++
 
+ws [ \t\n\r]+
 
 %% /* Actions */
 
 
-[ \t\n\r] {return 0;}
+{ws} { /* no action and no return */ }
 "++" { return INCREMENT; }
 "--" { return DECREMENT; }
 "+" { return PLUS; }
-"-" { return MINUS; }
+"-" { return MINUS; } 
 "*" { return MULT; }
 "/" { return DIV; }
 "(" { return OPEN; }
 ")" { return CLOSE; }
 ";" { return SEMI; }
 "=" { return ASSIGN; }
-[a-zA-Z_][a-zA-Z0-9_]*  { 
-    yylval.sval = yytext;
+[a-zA-Z_]+[a-zA-Z0-9_]* { 
+    yylval.sval = *yytext;
     return IDENTIFIER; 
 }
 [0-9]+|([0-9]+(\.[0-9]+)?(e[+-]?[0-9]+)?) { 

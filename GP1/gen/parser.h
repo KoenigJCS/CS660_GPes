@@ -71,12 +71,13 @@
 #include <string>
 #include <iostream>
 #include <map>
-extern int yylex();
-extern int yyparse();
+#include <variant>
+extern "C" int yyparse(void);
+extern "C" int yylex(void);
 void yyerror(const char* s);
-std::map<char*, double> symtab;
+std::map<char, double> symtab;
 
-#line 80 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 81 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -140,12 +141,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+#line 17 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
 
     double dval;
-    char* sval;
+    char sval;
 
-#line 149 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 150 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -462,18 +463,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  16
+#define YYFINAL  17
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   25
+#define YYLAST   27
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  15
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  7
+#define YYNNTS  8
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  18
+#define YYNRULES  20
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  29
+#define YYNSTATES  32
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   269
@@ -521,8 +522,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    62,    62,    66,    67,    69,    70,    71,    73,    74,
-      75,    77,    78,    79,    80,    81,    83,    84,    85
+       0,    66,    66,    70,    71,    73,    74,    76,    77,    78,
+      80,    81,    82,    84,    85,    86,    87,    88,    90,    91,
+      92
 };
 #endif
 
@@ -533,8 +535,8 @@ static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "NUMBER", "IDENTIFIER", "INCREMENT",
   "DECREMENT", "SEMI", "PLUS", "MINUS", "MULT", "DIV", "OPEN", "CLOSE",
-  "ASSIGN", "$accept", "Goal", "Declaration", "Expr", "Term", "Value",
-  "Factor", YY_NULLPTR
+  "ASSIGN", "$accept", "Goal", "DeclarationList", "Declaration", "Expr",
+  "Term", "Value", "Factor", YY_NULLPTR
 };
 #endif
 
@@ -562,9 +564,10 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -3,     5,    -2,    -3,    15,    -5,    -1,     6,    -6,    -6,
-      -6,    -6,    -6,    -6,     2,     0,    -6,    -6,     2,     2,
-       2,     2,    13,    -1,    -6,     6,     6,    -6,    -6
+      -3,    10,    -2,    -3,     7,    -3,    -5,     9,    11,    -6,
+      -6,    -6,    -6,    -6,    -6,     2,     0,    -6,    18,    -6,
+       2,     2,     2,     2,    14,     9,    -6,    -6,    11,    11,
+      -6,    -6
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -572,21 +575,22 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,    17,    18,     0,     0,     0,     4,     7,    10,    15,
-      13,    14,    11,    12,     0,     0,     1,     2,     0,     0,
-       0,     0,    18,     3,    16,     5,     6,     8,     9
+       0,    19,    20,     0,     0,     2,     0,     6,     9,    12,
+      17,    15,    16,    13,    14,     0,     0,     1,     0,     4,
+       0,     0,     0,     0,    20,     5,    18,     3,     7,     8,
+      10,    11
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -6,    -6,    17,     9,     3,     4,    -6
+      -6,    -6,    -6,     5,    -4,     3,     4,    -6
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     6,     7,     8,     9
+      -1,     4,     5,     6,     7,     8,     9,    10
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -594,16 +598,16 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     2,    17,    12,    13,     1,    22,    18,    19,     3,
-      10,    11,    14,    24,     3,    16,    20,    21,    12,    13,
-      15,    25,    26,    23,    27,    28
+       1,     2,    19,    13,    14,     1,    24,    17,    16,     3,
+      18,    25,    15,    26,     3,    11,    12,    20,    21,    13,
+      14,    22,    23,    28,    29,    27,    30,    31
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     4,     7,     5,     6,     3,     4,     8,     9,    12,
-       5,     6,    14,    13,    12,     0,    10,    11,     5,     6,
-       3,    18,    19,    14,    20,    21
+       3,     4,     7,     5,     6,     3,     4,     0,     3,    12,
+       5,    15,    14,    13,    12,     5,     6,     8,     9,     5,
+       6,    10,    11,    20,    21,     7,    22,    23
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -611,22 +615,25 @@ static const yytype_int8 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,     3,     4,    12,    16,    17,    18,    19,    20,    21,
-       5,     6,     5,     6,    14,    17,     0,     7,     8,     9,
-      10,    11,     4,    18,    13,    19,    19,    20,    20
+      22,     5,     6,     5,     6,    14,    18,     0,    18,     7,
+       8,     9,    10,    11,     4,    19,    13,     7,    20,    20,
+      21,    21
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    15,    16,    17,    17,    18,    18,    18,    19,    19,
-      19,    20,    20,    20,    20,    20,    21,    21,    21
+       0,    15,    16,    17,    17,    18,    18,    19,    19,    19,
+      20,    20,    20,    21,    21,    21,    21,    21,    22,    22,
+      22
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     2,     3,     1,     3,     3,     1,     3,     3,
-       1,     2,     2,     2,     2,     1,     3,     1,     1
+       0,     2,     1,     3,     2,     3,     1,     3,     3,     1,
+       3,     3,     1,     2,     2,     2,     2,     1,     3,     1,
+       1
 };
 
 
@@ -1322,87 +1329,99 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 62 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                       {
-        std::cout << "Result: " << (yyvsp[-1].dval) << std::endl;
+#line 66 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                      {
+        
     }
-#line 1330 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 1337 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
   case 3:
-#line 66 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                                    {symtab[(yyvsp[-2].sval)] = (yyvsp[0].dval); (yyval.dval) = (yyvsp[0].dval);}
-#line 1336 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 70 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                                                  { printf("%.2lf\n", (yyvsp[-1].dval)); }
+#line 1343 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+    break;
+
+  case 4:
+#line 71 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                       { printf("%.2lf\n", (yyvsp[-1].dval)); }
+#line 1349 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
   case 5:
-#line 69 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                     {(yyval.dval) = (yyvsp[-2].dval) + (yyvsp[0].dval);}
-#line 1342 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 73 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                                    {symtab[(yyvsp[-2].sval)] = (yyvsp[0].dval); (yyval.dval) = (yyvsp[0].dval);}
+#line 1355 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
-  case 6:
-#line 70 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                      {(yyval.dval) = (yyvsp[-2].dval) - (yyvsp[0].dval);}
-#line 1348 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+  case 7:
+#line 76 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                     {(yyval.dval) = (yyvsp[-2].dval) + (yyvsp[0].dval);}
+#line 1361 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
   case 8:
-#line 73 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                      {(yyval.dval) = (yyvsp[-2].dval) * (yyvsp[0].dval);}
-#line 1354 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 77 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                      {(yyval.dval) = (yyvsp[-2].dval) - (yyvsp[0].dval);}
+#line 1367 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
-  case 9:
-#line 74 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                     {(yyval.dval) = (yyvsp[-2].dval) / (yyvsp[0].dval);}
-#line 1360 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+  case 10:
+#line 80 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                      {(yyval.dval) = (yyvsp[-2].dval) * (yyvsp[0].dval);}
+#line 1373 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
   case 11:
-#line 77 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                            {symtab[(yyvsp[-1].sval)] == symtab[(yyvsp[-1].sval)]++; (yyval.dval) = symtab[(yyvsp[-1].sval)];}
-#line 1366 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
-    break;
-
-  case 12:
-#line 78 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                           {symtab[(yyvsp[-1].sval)] == symtab[(yyvsp[-1].sval)]--; (yyval.dval) = symtab[(yyvsp[-1].sval)];}
-#line 1372 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 81 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                     {(yyval.dval) = (yyvsp[-2].dval) / (yyvsp[0].dval);}
+#line 1379 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
   case 13:
-#line 79 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                       {(yyval.dval) = (yyvsp[-1].dval)++; }
-#line 1378 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 84 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                            {(yyval.dval) = ++symtab[(yyvsp[-1].sval)];}
+#line 1385 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
   case 14:
-#line 80 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                       {(yyval.dval) = (yyvsp[-1].dval)--; }
-#line 1384 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 85 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                           {(yyval.dval) = --symtab[(yyvsp[-1].sval)];}
+#line 1391 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+    break;
+
+  case 15:
+#line 86 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                       {(yyval.dval) = (yyvsp[-1].dval) + 1; }
+#line 1397 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
   case 16:
-#line 83 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-                               {(yyval.dval) = (yyvsp[-1].dval);}
-#line 1390 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
-    break;
-
-  case 17:
-#line 84 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
-             {(yyval.dval) = (yyvsp[0].dval);}
-#line 1396 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 87 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                       {(yyval.dval) = (yyvsp[-1].dval) - 1; }
+#line 1403 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
   case 18:
-#line 85 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+#line 90 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+                               {(yyval.dval) = (yyvsp[-1].dval);}
+#line 1409 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+    break;
+
+  case 19:
+#line 91 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+             {(yyval.dval) = (yyvsp[0].dval);}
+#line 1415 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+    break;
+
+  case 20:
+#line 92 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
                  {(yyval.dval) = symtab[(yyvsp[0].sval)];}
-#line 1402 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 1421 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
     break;
 
 
-#line 1406 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
+#line 1425 "/home/judebot/CS660/CS660_GPes/GP1/gen/parser.h"
 
       default: break;
     }
@@ -1634,10 +1653,10 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 88 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
+#line 95 "/home/judebot/CS660/CS660_GPes/GP1/calculator.y"
  /* Code */
 
 
-void yyerror(char * s) {
+void yyerror(const char * s) {
 	std::cerr << s << std::endl;
 }
